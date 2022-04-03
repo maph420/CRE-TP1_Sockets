@@ -1,0 +1,4 @@
+client.o
+dep.o
+server.o
+server.h.gch
