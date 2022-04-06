@@ -73,38 +73,37 @@ int main (int argc, char* argv[]) {
                 return -1;
             }
 
-	    // el mensaje se entrego
-            else {
-			printf("mensaje del cliente: %s\n", buff);
+	    // el mensaje se entrego (sino ya habria retornado)
+		printf("mensaje del cliente: %s\n", buff);
 
-                if (success_msg == 1) { 
-			success_msg++; // mostrar mensaje de recepcion, lo siguiente es pedir el user
-			
-			response_sv = parse_command(buff);
-
-			t = send(sockstoragefd, response_sv,strlen(response_sv),0);	
-
-			if (check_user("db.txt", buff)) {
-                        	success_msg++;
-                        	
-                    }
-      		 else parse_command("Contraseña Incorrecta");
-                 response_sv = parse_command(buff);
-
-                } else if(success_msg == 2) {
-                        response_sv = parse_command(buff);
-	            	if(check_paswwd("db.txt", buff)) success_msg++;
-                } else {
-                    response_sv = parse_command(buff);
-                    printf("host: %s\n", buff);
-                    printf("%s\n",response_sv);
-                    printf("%i", success_msg);
-                    //success_msg++;
-                    //printf("bytes recibidos: %i\n", received_bytes);
-                }
+            if (success_msg == 1) { 
+			    response_sv = parse_command(buff); // mostrar mensaje de recepcion, lo siguiente es pedir el user
+			    t = send(sockstoragefd, response_sv,strlen(response_sv),0);	
+                success_msg++;
+            } else if (success_msg == 2) { 
+                    response_sv = parse_command(buff); // recibe un username
+	            	success_msg++;
+                    //t = send(sockstoragefd, response_sv,strlen(response_sv),0);	
+                    //guardar username en un char*
+            } else if (success_msg == 3) { //recibe un password
+                //con el username que guardamos, hay que llamar a una funcion que unifique el username con el password en una unica variable
+                //luego, esa variable es pasada en check_user_and_pass() que devuelve 1 o 0
+                //si devuelve 1 entonces manda a parse_command() un mensaje como "password_correcto" para que devuelva un codigo en base a ello, y el caso contrario si devuelve 0
+                //t = send(sockstoragefd, response_sv,strlen(response_sv),0);
+                success_msg++;	
             }
-
+                
+                else {
+                    response_sv = parse_command(buff);
+                    t = send(sockstoragefd, response_sv,strlen(response_sv),0);	
+                    printf("host: %s\n", buff);
+                    printf("response: %s\n",response_sv);
+                    printf("%i", success_msg);
+                    printf("bytes recibidos: %i\n", received_bytes);
+                }
+                
     }
+
     freeaddrinfo(svinfo); //importante liberar la memoria una vez terminada la lista enlazada
     return 0;
 
