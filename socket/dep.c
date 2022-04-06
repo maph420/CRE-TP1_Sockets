@@ -10,17 +10,24 @@
 #include "dep.h"
 
 char* parse_command (char comm[]) {
-	int t;
 	if (! strcmp(comm,"mensaje_de_saludo")){	
 		return SUCCESS_CODE " FTP Server v.1.0\n";
 	}
-	else if (! strcmp(comm,"quit")) {
+	if (! strcmp(comm,"quit")) {
 		return GB_CODE " Goodbye";
 	}
-	else if (! strcmp(comm,"Contraseña Incorrecta")) {
-		return FAILED_LOG_IN_CODE " Contraseña Incorrecta";
-    }
-	else 
+	//if (comm.startsWith("user: ")) {
+    //    return PW_REQ_CODE " Password required";
+    //}
+
+    //if (! strcmp(comm, "password_correcto")) {
+      // return SUCCESS_LOG_IN_CODE " user logged in";
+    //}
+
+  //  if (!strmcmp(comm,"password_incorrect")) {
+    //    return FAILED_LOG_IN_CODE " user not logged in";
+    //}
+
 		return " ";
 }
 
