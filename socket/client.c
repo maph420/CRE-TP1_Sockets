@@ -43,7 +43,6 @@ int main (int argc, char* argv[]) {
         fprintf(stderr,"Error al conectar con el socket del servidor, ¿el programa del servidor esta corriendo? (%s)\n", gai_strerror(conn));
         return -1;
     }
-    //sprintf
 
     char msg[MAX_BUFF_LENGTH];
     int bytes_sent, init=1;
@@ -59,7 +58,7 @@ int main (int argc, char* argv[]) {
         } else if(init == 2) {
             printf("Ingrese el usuario: ");
             scanf("%[^\n]",msg), getchar();
-	    init++;
+	        init++;
         } else if(init == 3) {
             printf("Ingrese la contraseña: ");
             scanf("%[^\n]",msg), getchar();
@@ -75,14 +74,11 @@ int main (int argc, char* argv[]) {
         if (bytes_sent < 0) {
             fprintf(stderr,"Error al enviar el mensaje: %s\n", gai_strerror(bytes_sent));
             return -1;
-
-        }
-
-        else {
+        } else {
             printf("Mensaje: %s (bytes enviados: %i)\n", msg, bytes_sent);
-	    r = recv(sockfd,buff,MAX_BUFF_LENGTH,0);
-	    if (r > 0) printf("response: %s\n", buff);
-	    else fprintf(stderr,"Mensaje no enviado (%s)\n",gai_strerror(r));
+	        r = recv(sockfd,buff,MAX_BUFF_LENGTH,0);
+	        if (r > 0) printf("response: %s\n", buff);
+	        else fprintf(stderr,"Mensaje no enviado (%s)\n",gai_strerror(r));
         }
 
     }
