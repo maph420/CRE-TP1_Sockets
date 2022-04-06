@@ -71,15 +71,24 @@ int main (int argc, char* argv[]) {
                 return -1;
             }
             else {
-                if(success_msg == 1){
-                    //user
+                if(success_msg == 1){ success_msg++;
+                    if(check_user("db.txt", buff)){
+                        success_msg++;
+                        parse_command(("Password required for user %s", buff), sockstoragefd);
+                    }
+                    else parse_command("Contraseña Incorrecta", sockstoragefd);
+                    char* response = parse_command(buff, sockstoragefd);
+                } else if(success_msg == 2) {
+                    char* response = parse_command(buff, sockstoragefd);
+                    if(check_paswwd("db.txt", buff)) success_msg++;
+                } else {
+                    char* response = parse_command(buff, sockstoragefd);
+                    printf("host: %s\n", buff);
+                    printf("%s\n",response);
+                    printf("%i", success_msg);
+                    //success_msg++;
+                    //printf("bytes recibidos: %i\n", received_bytes);
                 }
-                char* response = parse_command(buff, sockstoragefd);
-                printf("host: %s\n", buff);
-                printf("%s\n",response);
-                printf("%i", success_msg);
-                success_msg++;
-                //printf("bytes recibidos: %i\n", received_bytes);
             }
 
     }

@@ -10,10 +10,15 @@ char* parse_command (char comm[], int s) {
 		return SUCCESS_CODE " FTP Server v.1.0";
 	}
 	else if (! strcmp(comm,"quit")) {
-		//aca falta cerrar el socket
+        pclose(s);
 		return GB_CODE " Goodbye";
 	}
-	else
+	else if (! strcmp(comm,"Contraseña Incorrecta")) {
+		return FAILED_LOG_IN_CODE " Contraseña Incorrecta";
+    }
+	else if (! strstr(comm,"Password required for user")) {
+		return PW_REQ_CODE " Password required for user";
+    }
 		return " ";
 }
 

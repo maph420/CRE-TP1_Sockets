@@ -57,11 +57,9 @@ int main (int argc, char* argv[]) {
         } else if(init == 2) {
             printf("Ingrese el usuario: ");
             scanf("%[^\n]",msg), getchar();
-            init++;
         } else if(init == 3) {
             printf("Ingrese la contraseña: ");
             scanf("%[^\n]",msg), getchar();
-            init++;
         }
         else {
             memset(msg,0,sizeof(msg));
