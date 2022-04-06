@@ -9,17 +9,12 @@
 
 #include "dep.h"
 
-char* parse_command (char comm[], int s) {
+char* parse_command (char comm[]) {
 	int t;
-	char* m = "ola desde el server";
-	if (! strcmp(comm,"mensaje_de_saludo")) {
-		t = send(s, m, strlen(m),0);
-		printf("dep: %d\n", t);
-		return "some text";	
-		//return SUCCESS_CODE " FTP Server v.1.0";
+	if (! strcmp(comm,"mensaje_de_saludo")){	
+		return SUCCESS_CODE " FTP Server v.1.0\n";
 	}
 	else if (! strcmp(comm,"quit")) {
-        	//pclose(s);
 		return GB_CODE " Goodbye";
 	}
 	else if (! strcmp(comm,"Contraseña Incorrecta")) {

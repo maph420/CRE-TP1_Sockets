@@ -12,7 +12,7 @@
 
 int foo (int c);
 
-char* parse_command(char comm[], int s);
+char* parse_command(char comm[]);
 
 int check_user(char* path, char* user);
 
