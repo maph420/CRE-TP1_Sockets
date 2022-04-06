@@ -16,3 +16,32 @@ char* parse_command (char comm[], int s) {
 	else
 		return " ";
 }
+
+int check_user(char* path, char* user) {
+    FILE* fp = fopen(path, "r");
+    char* delim = ":";
+    char str[999];
+    if (fp) {
+        while (fscanf(fp, "%s", str)!=EOF){
+            strtok(str, delim);
+            if(strstr(str, user)) return 1;
+        }
+        fclose(fp);
+    }
+    return 0;
+}
+
+int check_paswwd(char* path, char* passwd) {
+    FILE* fp = fopen(path, "r");
+    char* delim = ":";
+    char str[999];
+    if (fp) {
+        while (fscanf(fp, "%s", str)!=EOF){
+            strtok(str, delim);
+            strtok(NULL, delim);
+            if(strstr(str, passwd)) return 1;
+        }
+        fclose(fp);
+    }
+    return 0;
+}

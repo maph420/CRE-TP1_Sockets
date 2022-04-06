@@ -54,6 +54,7 @@ int main (int argc, char* argv[]) {
 
     addr_size = sizeof their_addr;
     sockstoragefd = accept(sockfd, (struct sockaddr*)&their_addr, &addr_size);
+    int success_msg=1;
 
     while(1) {
 
@@ -70,9 +71,14 @@ int main (int argc, char* argv[]) {
                 return -1;
             }
             else {
+                if(success_msg == 1){
+                    //user
+                }
                 char* response = parse_command(buff, sockstoragefd);
                 printf("host: %s\n", buff);
                 printf("%s\n",response);
+                printf("%i", success_msg);
+                success_msg++;
                 //printf("bytes recibidos: %i\n", received_bytes);
             }
 
