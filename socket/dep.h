@@ -14,4 +14,6 @@ int foo (int c);
 
 char* parse_command(char comm[], int s);
 
+int check_user(char* path, char* user);
+
 #endif

@@ -61,6 +61,7 @@ int main (int argc, char* argv[]) {
         // recibir 
         int received_bytes;
         char buff[MAX_BUFF_LENGTH];
+	char msg[MAX_BUFF_LENGTH];
         memset(buff,0,sizeof(buff)); //limpiar buffer por cada nuevo mensaje del host
 
         received_bytes = recv(sockstoragefd, buff, MAX_BUFF_LENGTH, 0);
@@ -70,16 +71,20 @@ int main (int argc, char* argv[]) {
                 fprintf(stderr,"error: %s\n", gai_strerror(received_bytes));
                 return -1;
             }
+
+	    // el mensaje se entrego
             else {
-                if(success_msg == 1){ success_msg++;
-                    if(check_user("db.txt", buff)){
-                        success_msg++;
-                        parse_command(("Password required for user %s", buff), sockstoragefd);
+                if (success_msg == 1) { 
+			success_msg++; // mostrar mensaje de recepcion, lo siguiente es pedir el user
+			
+			if (check_user("db.txt", buff)) {
+                        	success_msg++;
+                        	
                     }
                     else parse_command("Contraseña Incorrecta", sockstoragefd);
-                    char* response = parse_command(buff, sockstoragefd);
+                     char* response = parse_command(buff, sockstoragefd);
                 } else if(success_msg == 2) {
-                    char* response = parse_command(buff, sockstoragefd);
+                     char* response = parse_command(buff, sockstoragefd);
                     if(check_paswwd("db.txt", buff)) success_msg++;
                 } else {
                     char* response = parse_command(buff, sockstoragefd);

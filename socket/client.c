@@ -47,6 +47,8 @@ int main (int argc, char* argv[]) {
 
     char msg[MAX_BUFF_LENGTH];
     int bytes_sent, init=1;
+    int r;
+    char buff[MAX_BUFF_LENGTH];
 
     while(1) {
 
@@ -60,8 +62,7 @@ int main (int argc, char* argv[]) {
         } else if(init == 3) {
             printf("Ingrese la contraseña: ");
             scanf("%[^\n]",msg), getchar();
-        }
-        else {
+        } else {
             memset(msg,0,sizeof(msg));
             printf("Ingresar mensaje\n");
             scanf("%[^\n]%*c", msg);
@@ -72,10 +73,14 @@ int main (int argc, char* argv[]) {
         if (bytes_sent < 0) {
             fprintf(stderr,"Error al enviar el mensaje: %s\n", gai_strerror(bytes_sent));
             return -1;
+
         }
 
         else {
             printf("Mensaje: %s (bytes enviados: %i)\n", msg, bytes_sent);
+	    r = recv(sockfd,buff,MAX_BUFF_LENGTH,0);
+	    if (r > 0) printf("response: %s\n", buff);
+	    else fprintf(stderr,"Mensaje no enviado (%s)\n",gai_strerror(r));
         }
 
     }
