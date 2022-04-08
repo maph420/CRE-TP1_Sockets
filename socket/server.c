@@ -56,15 +56,21 @@ int main (int argc, char* argv[]) {
     sockstoragefd = accept(sockfd, (struct sockaddr*)&their_addr, &addr_size);
     int success_msg=1;
 
-    while(1) {
-
         // recibir 
         int received_bytes;
         char buff[MAX_BUFF_LENGTH];
 	char msg[MAX_BUFF_LENGTH];
-        memset(buff,0,sizeof(buff)); //limpiar buffer por cada nuevo mensaje del host
-	int t;
 	char* response_sv;
+	int t;
+	char user[MAX_BUFF_LENGTH];
+	char dst[MAX_BUFF_LENGTH];
+
+	while (1) {
+
+        memset(buff,0,sizeof(buff)); //limpiar buffer por cada nuevo mensaje del host
+	memset(buff,0,sizeof(msg));
+	//memset(user,0,sizeof(user)); //este nenset unicamente se haria una vez se sabe que el login fallo
+
         received_bytes = recv(sockstoragefd, buff, MAX_BUFF_LENGTH, 0);
 
 
@@ -72,37 +78,42 @@ int main (int argc, char* argv[]) {
                 fprintf(stderr,"error: %s\n", gai_strerror(received_bytes));
                 return -1;
             }
-
-	    // el mensaje se entrego (sino ya habria retornado)
-		printf("mensaje del cliente: %s\n", buff);
+	    	// el mensaje se entrego (sino ya habria retornado)
+		/*printf("mensaje recibido desde el cliente: %s\n", buff); */
 
             if (success_msg == 1) { 
-			    response_sv = parse_command(buff); // mostrar mensaje de recepcion, lo siguiente es pedir el user
-			    t = send(sockstoragefd, response_sv,strlen(response_sv),0);	
-                success_msg++;
+		response_sv = parse_command(buff); // mostrar mensaje de recepcion, lo siguiente es pedir el user	
+               	success_msg++;
             } else if (success_msg == 2) { 
-                    response_sv = parse_command(buff); // recibe un username
-	            	success_msg++;
-                    //t = send(sockstoragefd, response_sv,strlen(response_sv),0);	
-                    //guardar username en un char*
+            	response_sv = parse_command(buff); // con el username recibido, buscar el mensaje adecuado de retorno
+	       	success_msg++;
+		strcpy(user,buff); //guardar username
             } else if (success_msg == 3) { //recibe un password
-                //con el username que guardamos, hay que llamar a una funcion que unifique el username con el password en una unica variable
+		response_sv = parse_command(buff); //esta linea habria que sacarla. y en cambio que response_sv dependa de check_user_and_pass()
+		merge_user_data (user,buff,dst);
+		
+		printf("Par a verificar: %s\n",dst);	
+		
+
                 //luego, esa variable es pasada en check_user_and_pass() que devuelve 1 o 0
                 //si devuelve 1 entonces manda a parse_command() un mensaje como "password_correcto" para que devuelva un codigo en base a ello, y el caso contrario si devuelve 0
-                //t = send(sockstoragefd, response_sv,strlen(response_sv),0);
                 success_msg++;	
             }
                 
                 else {
                     response_sv = parse_command(buff);
-                    t = send(sockstoragefd, response_sv,strlen(response_sv),0);	
-                    printf("host: %s\n", buff);
-                    printf("response: %s\n",response_sv);
-                    printf("%i", success_msg);
-                    printf("bytes recibidos: %i\n", received_bytes);
-                }
-                
-    }
+		}	    
+	
+		if (strcmp(response_sv," ")) { 
+			printf("%s\n",response_sv);
+		} else printf("Texto recibido desde el cliente (no es un comando): %s\n", buff);
+		
+
+		t = send(sockstoragefd, response_sv, strlen(response_sv),0);
+               	if (!(t>0)) {
+			fprintf(stderr,"Mensaje no enviado (%s)\n",gai_strerror(t));	
+    		}
+	}
 
     freeaddrinfo(svinfo); //importante liberar la memoria una vez terminada la lista enlazada
     return 0;

@@ -16,4 +16,7 @@ char* parse_command(char comm[]);
 
 int check_user(char* path, char* user);
 
+void merge_user_data (char name[], char password[], char* dst);
+
+
 #endif
