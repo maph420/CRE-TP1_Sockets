@@ -92,19 +92,22 @@ int main (int argc, char* argv[]) {
 		response_sv = parse_command(buff); //esta linea habria que sacarla. y en cambio que response_sv dependa de check_user_and_pass()
 		merge_user_data (user,buff,dst);
 		
-		printf("Par a verificar: %s\n",dst);	
+		/*printf("Par a verificar: %s\n",dst);*/	
 		
+		if (check_user("db.txt",dst)) {
+			strcpy(buff,"password_correcto");
+		}
+		else strcpy(buff,"password_incorrecto");
 
-                //luego, esa variable es pasada en check_user_and_pass() que devuelve 1 o 0
-                //si devuelve 1 entonces manda a parse_command() un mensaje como "password_correcto" para que devuelva un codigo en base a ello, y el caso contrario si devuelve 0
-                success_msg++;	
+                success_msg++;
+		response_sv = parse_command(buff);	
             }
                 
                 else {
                     response_sv = parse_command(buff);
 		}	    
 	
-		if (strcmp(response_sv," ")) { 
+		if (strcmp(response_sv," ") || strncmp(buff, "pass: ",8)) { 
 			printf("%s\n",response_sv);
 		} else printf("Texto recibido desde el cliente (no es un comando): %s\n", buff);
 		

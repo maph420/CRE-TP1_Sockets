@@ -17,46 +17,43 @@ char* parse_command (char comm[]) {
 	if (! strcmp(comm,"quit")) {
 		return GB_CODE " Goodbye";
 	}
-	if (! strncmp(comm, "user: ",6)) {
+	if (! strncmp(comm, "user: ",6) || ! strncmp(comm, "user:",5)) {
+		printf("sexo\n");
         	return PW_REQ_CODE " Password required";
     	}
     	if (! strcmp(comm, "password_correcto")) {
        		return SUCCESS_LOG_IN_CODE " user logged in";
     	}
-    	if (!strcmp(comm,"password_incorrect")) {
+    	if (!strcmp(comm,"password_incorrecto")) {
         return FAILED_LOG_IN_CODE " user not logged in";
    	}
 	return " "; //default
 }
 
-int check_user(char* path, char* user) {
-    FILE* fp = fopen(path, "r");
-    char* delim = ":";
-    char str[999];
-    if (fp) {
-        while (fscanf(fp, "%s", str)!=EOF){
-            strtok(str, delim);
-            if(strstr(str, user)) return 1;
-        }
-        fclose(fp);
-    }
-    return 0; //si no encuentra al user durante la lectua del archivo, entonces no esta
+ 
+int check_user(char* path, char user[]) {
+
+	char line[255];
+	FILE* arch = fopen(path,"r");
+
+	if (!arch) {       
+		fprintf(stderr,"Hubo un problema al leer el archivo\n");
+		return -1;
+	}
+	// int i=0;
+	while(fgets(line,255,arch)) {
+		 /*printf("Linea %d: %s\n",++i,line);
+		printf("Comparo %s y %s\n",line,user);*/
+		if (! strcmp(line,user)) {
+			/*printf("Match encontrado! (%s y %s\n)", line,user);*/
+			fclose(arch);
+			return 1;	
+		}
+	}
+	fclose(arch);
+	return 0;
 }
 
-int check_paswwd(char* path, char* passwd) {
-    FILE* fp = fopen(path, "r");
-    char* delim = ":";
-    char str[999];
-    if (fp) {
-        while (fscanf(fp, "%s", str)!=EOF){
-            strtok(str, delim);
-            strtok(NULL, delim);
-            if(strstr(str, passwd)) return 1;
-        }
-        fclose(fp);
-    }
-    return 0;
-}
 
 void merge_user_data (char name[], char password[], char dst[]) {
 	char* nameExtracted = strtok(name,": ");
@@ -66,7 +63,7 @@ void merge_user_data (char name[], char password[], char dst[]) {
 	passExtracted = strtok(NULL,": ");
 	
 	
-	snprintf(dst, MAX_BUFF_LENGTH,"%s:%s",nameExtracted,passExtracted);
+	snprintf(dst, MAX_BUFF_LENGTH,"%s:%s\n",nameExtracted,passExtracted);
 }
 
 
