@@ -73,7 +73,7 @@ int main (int argc, char* argv[]) {
 
         received_bytes = recv(sockstoragefd, buff, MAX_BUFF_LENGTH, 0);
 
-
+	/*printf("success_msg: %i ,buff:%s\n",success_msg,buff);*/
             if (received_bytes < 0) {
                 fprintf(stderr,"error: %s\n", gai_strerror(received_bytes));
                 return -1;
@@ -89,17 +89,19 @@ int main (int argc, char* argv[]) {
 	       	success_msg++;
 		strcpy(user,buff); //guardar username
             } else if (success_msg == 3) { //recibe un password
-		response_sv = parse_command(buff); //esta linea habria que sacarla. y en cambio que response_sv dependa de check_user_and_pass()
+		response_sv = parse_command(buff);
 		merge_user_data (user,buff,dst);
 		
 		/*printf("Par a verificar: %s\n",dst);*/	
 		
 		if (check_user("db.txt",dst)) {
 			strcpy(buff,"password_correcto");
+			success_msg++;
 		}
-		else strcpy(buff,"password_incorrecto");
-
-                success_msg++;
+		else {
+			strcpy(buff,"password_incorrecto");
+			success_msg-=2;
+		}
 		response_sv = parse_command(buff);	
             }
                 

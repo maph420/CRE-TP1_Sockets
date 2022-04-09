@@ -50,26 +50,31 @@ int main (int argc, char* argv[]) {
     char buff[MAX_BUFF_LENGTH];
 
     while(1) {
-	
-	memset(buff,0,sizeof(buff));
-	memset(buff,0,sizeof(msg));
+
+	/*printf("init: %i\n",init);*/
         // la funcion de init es detectar la primera interaccion cliente->servidor
 	if (init == 1) {
 		strcpy(msg,"mensaje_de_saludo");
 		init++;
-        } else if(init == 2) {
-		printf(">: ");
+        } else if (init == 2) {
+		printf("Ingresar usuario (user: <nombre_de_usuario>) \n>: ");
 		scanf("%[^\n]",msg), getchar();
 		init++;
-        } else if(init == 3) {
- 		printf(">: ");
+        } else if (init == 3) {
+ 		printf("Ingresar contrasena (pass: <contrasena>)\n>: ");
 		scanf("%[^\n]",msg), getchar();
 		init++;
+	} else if (init == 4) {
+		if (! strncmp(buff,"530",3)) {
+		/*printf("Volver a pedir contrasena\n"); */
+		init -= 2;
+		} else init++; 		
+
 	} else {
-		init++;
 		memset(msg,0,sizeof(msg));
             	printf(">: ");
             	scanf("%[^\n]%*c", msg);
+		init++;
         }
 
         bytes_sent = send(sockfd, msg, strlen(msg),0);
@@ -78,9 +83,14 @@ int main (int argc, char* argv[]) {
 		fprintf(stderr,"Error al enviar el mensaje: %s\n", gai_strerror(bytes_sent));
             	return -1;
         } else {
+		memset(buff,0,sizeof(buff));
             	/*printf("Mensaje: %s (bytes enviados: %i)\n", msg, bytes_sent);*/ 
 	        r = recv(sockfd,buff,MAX_BUFF_LENGTH,0);
-	        if (r > 0) printf("server: %s\n", buff);
+	        if (r > 0) {
+			if (strcmp(buff," ")) {
+				printf("server: %s\n", buff);
+			}
+		}
 	        else fprintf(stderr,"Mensaje no enviado (%s)\n",gai_strerror(r));
         }
 

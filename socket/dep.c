@@ -18,7 +18,6 @@ char* parse_command (char comm[]) {
 		return GB_CODE " Goodbye";
 	}
 	if (! strncmp(comm, "user: ",6) || ! strncmp(comm, "user:",5)) {
-		printf("sexo\n");
         	return PW_REQ_CODE " Password required";
     	}
     	if (! strcmp(comm, "password_correcto")) {
