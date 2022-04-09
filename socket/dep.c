@@ -18,7 +18,8 @@ char* parse_command (char comm[]) {
 		return GB_CODE " Goodbye";
 	}
 	if (! strncmp(comm, "user: ",6) || ! strncmp(comm, "user:",5)) {
-        	return PW_REQ_CODE " Password required";
+		//char* usr = get_user(comm);
+        	return PW_REQ_CODE " Password Required";
     	}
     	if (! strcmp(comm, "password_correcto")) {
        		return SUCCESS_LOG_IN_CODE " user logged in";
@@ -65,4 +66,8 @@ void merge_user_data (char name[], char password[], char dst[]) {
 	snprintf(dst, MAX_BUFF_LENGTH,"%s:%s\n",nameExtracted,passExtracted);
 }
 
-
+char* get_user (char nameComm[]) {
+	char* newName = strtok(nameComm,": ");
+	newName = strtok(NULL,": ");
+	return newName;
+}

@@ -52,14 +52,14 @@ int main (int argc, char* argv[]) {
     while(1) {
 
 	/*printf("init: %i\n",init);*/
-        // la funcion de init es detectar la primera interaccion cliente->servidor
+        // la funcion de init es detectar la secuencia de interacciones cliente->servidor
 	if (init == 1) {
 		strcpy(msg,"mensaje_de_saludo");
 		init++;
         } else if (init == 2) {
 		printf("Ingresar usuario (user: <nombre_de_usuario>) \n>: ");
 		scanf("%[^\n]",msg), getchar();
-		init++;
+		 init++;
         } else if (init == 3) {
  		printf("Ingresar contrasena (pass: <contrasena>)\n>: ");
 		scanf("%[^\n]",msg), getchar();
@@ -71,6 +71,10 @@ int main (int argc, char* argv[]) {
 		} else init++; 		
 
 	} else {
+		if (! strncmp(buff, "221",3)) {
+			shutdown(sockfd, SHUT_RDWR);
+			return 0;
+		}
 		memset(msg,0,sizeof(msg));
             	printf(">: ");
             	scanf("%[^\n]%*c", msg);

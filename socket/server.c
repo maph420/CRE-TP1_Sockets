@@ -61,7 +61,7 @@ int main (int argc, char* argv[]) {
         char buff[MAX_BUFF_LENGTH];
 	char msg[MAX_BUFF_LENGTH];
 	char* response_sv;
-	int t;
+	int t, off=0;
 	char user[MAX_BUFF_LENGTH];
 	char dst[MAX_BUFF_LENGTH];
 
@@ -106,7 +106,13 @@ int main (int argc, char* argv[]) {
             }
                 
                 else {
-                    response_sv = parse_command(buff);
+			if (off) shutdown(sockstoragefd, SHUT_RDWR);
+				 
+			response_sv = parse_command(buff);
+			if (! strncmp(response_sv,"221",3)) {
+				//shutdown(sockstoragefd,SHUT_RDWR);
+				off=1;
+			}
 		}	    
 	
 		if (strcmp(response_sv," ") || strncmp(buff, "pass: ",8)) { 
