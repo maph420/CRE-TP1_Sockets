@@ -6,6 +6,9 @@
 #include <netdb.h>
 #include "dep.h"
 
+// esto es una linea de codigo comentada
+/* esto es un comentario */
+
 int main (int argc, char* argv[]) {
 
     if (argc != 2) {
@@ -20,15 +23,15 @@ int main (int argc, char* argv[]) {
     socklen_t addr_size;
 
 
-    memset(&h, 0, sizeof(h)); // se asegura de igualar a 0 cada caracter de h
+    memset(&h, 0, sizeof(h)); /* se asegura de igualar a 0 cada caracter de h (basicamente, limpia el buffer) */
 
-    h.ai_family = AF_INET; //IPV4
-    h.ai_socktype = SOCK_STREAM; //TCP
-    h.ai_flags = AI_PASSIVE; // usar la ip del host actual
+    h.ai_family = AF_INET; /*IPV4*/
+    h.ai_socktype = SOCK_STREAM; /*TCP*/
+    h.ai_flags = AI_PASSIVE; /*usar la ip del host actual*/
 
     status = getaddrinfo(NULL, argv[1], &h, &svinfo);
 
-    // svinfo es una lista enlazada que contiene estructuras del tipo addrinfo
+    /* svinfo es una lista enlazada que contiene estructuras del tipo addrinfo */
 
     if (status != 0) {
         fprintf(stderr, "error en la conexion: %s\n", gai_strerror(status));
@@ -37,7 +40,7 @@ int main (int argc, char* argv[]) {
 
     sockfd = socket(svinfo->ai_family, svinfo->ai_socktype, svinfo->ai_protocol);
 
-    // bindear el socket recien creado con la ip al puerto pasado al getaddrinfo
+    /* bindear el socket recien creado con la ip al puerto pasado al getaddrinfo */
     bnd = bind(sockfd, svinfo->ai_addr, svinfo->ai_addrlen);
 
     if (bnd < 0) {
@@ -45,29 +48,30 @@ int main (int argc, char* argv[]) {
         return -1;
     }
 
-    // escuchar conexiones que lleguen
+    /* escuchar conexiones que lleguen */
     listen(sockfd, BACKLOG);
 
     printf("Puerto %s abierto escuchando conexiones...\n", argv[1]);
 
-    // aceptar conexion que llegue, a la cual se le asignara un nuevo socket especifico que se utilizara para enviar/recibir flujo
+    /* aceptar conexion que llegue, a la cual se le asignara un nuevo socket especifico que se utilizara para enviar/recibir flujo */
 
     addr_size = sizeof their_addr;
     sockstoragefd = accept(sockfd, (struct sockaddr*)&their_addr, &addr_size);
     int success_msg=1;
 
-        // recibir 
+        /* recibir */ 
         int received_bytes, t, off=0;
         char buff[MAX_BUFF_LENGTH], msg[MAX_BUFF_LENGTH], user[MAX_BUFF_LENGTH], dst[MAX_BUFF_LENGTH];
 	char* response_sv;
 
 	while (1) {
-
-        memset(buff,0,sizeof(buff)); //limpiar buffer por cada nuevo mensaje del host
+	
+	/* asegurar que los buffer de entrada y salida esten limpios */
+        memset(buff,0,sizeof(buff));
 	memset(buff,0,sizeof(msg));
 
         received_bytes = recv(sockstoragefd, buff, MAX_BUFF_LENGTH, 0);
-	//printf("success_msg: %i ,buff:%s\n",success_msg,buff);*/
+	// printf("success_msg: %i ,buff:%s\n",success_msg,buff);
 		
             if (received_bytes < 0) {
                 fprintf(stderr,"error: %s\n", gai_strerror(received_bytes));
@@ -76,14 +80,14 @@ int main (int argc, char* argv[]) {
 		//printf("mensaje recibido desde el cliente: %s\n", buff); 
 
             if (success_msg == 1) { 
-		response_sv = parse_command(buff); // mostrar mensaje de recepcion, lo siguiente es pedir el user	
+		response_sv = parse_command(buff); /* cargar mensaje de recepcion */	
                	success_msg++;
             } else if (success_msg == 2) { 
-            	response_sv = parse_command(buff); // con el username recibido, buscar el mensaje adecuado de retorno
+            	response_sv = parse_command(buff); /* cargar user */
 	       	success_msg++;
 		strcpy(user,buff); //guardar username
-            } else if (success_msg == 3) { //recibe un password
-		response_sv = parse_command(buff);
+            } else if (success_msg == 3) { 
+		response_sv = parse_command(buff); /* cargar password */
 		merge_user_data (user,buff,dst);
 		
 		// printf("Par a verificar: %s\n",dst);	
@@ -120,8 +124,9 @@ int main (int argc, char* argv[]) {
 			fprintf(stderr,"Mensaje no enviado (%s)\n",gai_strerror(t));	
     		}
 	}
-
-    freeaddrinfo(svinfo); //importante liberar la memoria una vez terminada la lista enlazada
+	
+/* liberar memoria una vez finalizado el programa */
+    freeaddrinfo(svinfo); 
     return 0;
 
 }
