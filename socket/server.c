@@ -57,29 +57,23 @@ int main (int argc, char* argv[]) {
     int success_msg=1;
 
         // recibir 
-        int received_bytes;
-        char buff[MAX_BUFF_LENGTH];
-	char msg[MAX_BUFF_LENGTH];
+        int received_bytes, t, off=0;
+        char buff[MAX_BUFF_LENGTH], msg[MAX_BUFF_LENGTH], user[MAX_BUFF_LENGTH], dst[MAX_BUFF_LENGTH];
 	char* response_sv;
-	int t, off=0;
-	char user[MAX_BUFF_LENGTH];
-	char dst[MAX_BUFF_LENGTH];
 
 	while (1) {
 
         memset(buff,0,sizeof(buff)); //limpiar buffer por cada nuevo mensaje del host
 	memset(buff,0,sizeof(msg));
-	//memset(user,0,sizeof(user)); //este nenset unicamente se haria una vez se sabe que el login fallo
 
         received_bytes = recv(sockstoragefd, buff, MAX_BUFF_LENGTH, 0);
-
-	/*printf("success_msg: %i ,buff:%s\n",success_msg,buff);*/
+	//printf("success_msg: %i ,buff:%s\n",success_msg,buff);*/
+		
             if (received_bytes < 0) {
                 fprintf(stderr,"error: %s\n", gai_strerror(received_bytes));
                 return -1;
             }
-	    	// el mensaje se entrego (sino ya habria retornado)
-		/*printf("mensaje recibido desde el cliente: %s\n", buff); */
+		//printf("mensaje recibido desde el cliente: %s\n", buff); 
 
             if (success_msg == 1) { 
 		response_sv = parse_command(buff); // mostrar mensaje de recepcion, lo siguiente es pedir el user	
@@ -92,9 +86,9 @@ int main (int argc, char* argv[]) {
 		response_sv = parse_command(buff);
 		merge_user_data (user,buff,dst);
 		
-		/*printf("Par a verificar: %s\n",dst);*/	
+		// printf("Par a verificar: %s\n",dst);	
 		
-		if (check_user("db.txt",dst)) {
+		if (check_user("ftpusers.txt",dst)) {
 			strcpy(buff,"password_correcto");
 			success_msg++;
 		}
@@ -109,8 +103,8 @@ int main (int argc, char* argv[]) {
 			if (off) shutdown(sockstoragefd, SHUT_RDWR);
 				 
 			response_sv = parse_command(buff);
+			
 			if (! strncmp(response_sv,"221",3)) {
-				//shutdown(sockstoragefd,SHUT_RDWR);
 				off=1;
 			}
 		}	    
@@ -121,7 +115,8 @@ int main (int argc, char* argv[]) {
 		
 
 		t = send(sockstoragefd, response_sv, strlen(response_sv),0);
-               	if (!(t>0)) {
+		
+               	if (t<0) {
 			fprintf(stderr,"Mensaje no enviado (%s)\n",gai_strerror(t));	
     		}
 	}
