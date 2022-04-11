@@ -32,10 +32,9 @@ int main (int argc, char* argv[]) {
         return -1;
     }
 
-    // svinfo es una lista enlazada que contiene estructuras del tipo addrinfo
+    /* svinfo es una lista enlazada que contiene estructuras del tipo addrinfo */
 
     sockfd = socket(svinfo->ai_family, svinfo->ai_socktype, svinfo->ai_protocol);
-
 
     conn = connect(sockfd, svinfo->ai_addr, svinfo->ai_addrlen);
 
@@ -44,15 +43,14 @@ int main (int argc, char* argv[]) {
         return -1;
     }
 
-    char msg[MAX_BUFF_LENGTH];
-    int bytes_sent, init=1;
-    int r;
-    char buff[MAX_BUFF_LENGTH];
-
+    char msg[MAX_BUFF_LENGTH], buff[MAX_BUFF_LENGTH];
+    int bytes_sent, init=1, r;
+	
     while(1) {
 
-	/*printf("init: %i\n",init);*/
-        // la funcion de init es detectar la secuencia de interacciones cliente->servidor
+	//printf("init: %i\n",init);
+        /* la funcion de init es detectar la secuencia de interacciones cliente->servidor */
+	    
 	if (init == 1) {
 		strcpy(msg,"mensaje_de_saludo");
 		init++;
@@ -66,10 +64,8 @@ int main (int argc, char* argv[]) {
 		init++;
 	} else if (init == 4) {
 		if (! strncmp(buff,"530",3)) {
-		/*printf("Volver a pedir contrasena\n"); */
 		init -= 2;
 		} else init++; 		
-
 	} else {
 		if (! strncmp(buff, "221",3)) {
 			shutdown(sockfd, SHUT_RDWR);
@@ -88,7 +84,7 @@ int main (int argc, char* argv[]) {
             	return -1;
         } else {
 		memset(buff,0,sizeof(buff));
-            	/*printf("Mensaje: %s (bytes enviados: %i)\n", msg, bytes_sent);*/ 
+            	// printf("Mensaje: %s (bytes enviados: %i)\n", msg, bytes_sent);
 	        r = recv(sockfd,buff,MAX_BUFF_LENGTH,0);
 	        if (r > 0) {
 			if (strcmp(buff," ")) {
@@ -99,7 +95,7 @@ int main (int argc, char* argv[]) {
         }
 
     }
-    // liberar memoria
+    /* liberar memoria */
     freeaddrinfo(svinfo);
     return 0;
 }
