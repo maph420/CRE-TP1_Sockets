@@ -50,37 +50,42 @@ int main (int argc, char* argv[]) {
 
 	//printf("init: %i\n",init);
         /* la funcion de init es detectar la secuencia de interacciones cliente->servidor */
-	    
-	if (init == 1) {
-		strcpy(msg,"mensaje_de_saludo");
-		init++;
-        } else if (init == 2) {
-		printf("Ingresar usuario (user: <nombre_de_usuario>) \n>: ");
-		scanf("%[^\n]",msg), getchar();
-		strcpy(user,msg);
-		 init++;
-        } else if (init == 3) {
-		if (! strncmp(buff,"331",3)) {
-			snprintf(user_buff,MAX_BUFF_LENGTH,"%s %s %s\n",buff,"for",get_user(user));
-			printf("user_buff: %s\n",user_buff);
-		} else memset(user,0,sizeof(user));
- 		printf("Ingresar contrasena (pass: <contrasena>)\n>: ");
-		scanf("%[^\n]",msg), getchar();
-		init++;
-	} else if (init == 4) {
-		if (! strncmp(buff,"530",3)) {
-		init -= 2;
-		} else init++; 		
-	} else {
-		if (! strncmp(buff, "221",3)) {
-			shutdown(sockfd, SHUT_RDWR);
-			return 0;
-		}
-		memset(msg,0,sizeof(msg));
-            	printf(">: ");
-            	scanf("%[^\n]%*c", msg);
-		init++;
-        }
+	switch (init) {
+		case 1:
+			strcpy(msg,"mensaje_de_saludo");	
+			init++;
+			break;
+		case 2:
+			printf("Ingresar usuario (user: <nombre_de_usuario>) \n>: ");
+			scanf("%[^\n]",msg), getchar();
+			strcpy(user,msg);
+			init++;
+			break;
+		case 3:
+			if (! strncmp(buff,"331",3)) {
+				/* aca ta la warning */
+				snprintf(user_buff,MAX_BUFF_LENGTH,"%s %s %s\n",buff,"for",get_user(user));
+			} else memset(user,0,sizeof(user));
+ 			printf("Ingresar contrasena (pass: <contrasena>)\n>: ");
+			scanf("%[^\n]",msg), getchar();
+			init++;
+			break;
+		case 4:
+			if (! strncmp(buff,"530",3)) {
+				init -= 2;
+			} else init++; 		
+			break;
+		default:
+			if (! strncmp(buff, "221",3)) {
+				shutdown(sockfd, SHUT_RDWR);
+				return 0;
+			}
+			memset(msg,0,sizeof(msg));
+            		printf(">: ");
+            		scanf("%[^\n]%*c", msg);
+			init++;
+	}
+			
 
         bytes_sent = send(sockfd, msg, strlen(msg),0);
 
