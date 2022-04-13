@@ -43,9 +43,9 @@ int main (int argc, char* argv[]) {
         return -1;
     }
 
-    char msg[MAX_BUFF_LENGTH], buff[MAX_BUFF_LENGTH];
+    char msg[MAX_BUFF_LENGTH], buff[MAX_BUFF_LENGTH], user[MAX_BUFF_LENGTH], user_buff[MAX_BUFF_LENGTH];
     int bytes_sent, init=1, r;
-	
+
     while(1) {
 
 	//printf("init: %i\n",init);
@@ -57,8 +57,13 @@ int main (int argc, char* argv[]) {
         } else if (init == 2) {
 		printf("Ingresar usuario (user: <nombre_de_usuario>) \n>: ");
 		scanf("%[^\n]",msg), getchar();
+		strcpy(user,msg);
 		 init++;
         } else if (init == 3) {
+		if (! strncmp(buff,"331",3)) {
+			snprintf(user_buff,MAX_BUFF_LENGTH,"%s %s %s\n",buff,"for",get_user(user));
+			printf("user_buff: %s\n",user_buff);
+		} else memset(user,0,sizeof(user));
  		printf("Ingresar contrasena (pass: <contrasena>)\n>: ");
 		scanf("%[^\n]",msg), getchar();
 		init++;
